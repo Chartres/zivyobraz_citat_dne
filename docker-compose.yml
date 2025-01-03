@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  citat_dne_scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: citat_dne
+    restart: always
+    env_file:
+      - .env   # Make sure this is in the same directory as docker-compose.yml
+    volumes:
+      - ./run.sh:/usr/src/app/run.sh
+      - ./script.py:/usr/src/app/script.py
