@@ -1,23 +1,21 @@
 # Daily Bible Verse to Zivyobraz
 
-This repository contains a simple setup to scrape daily Bible verses from [vira.cz](https://www.vira.cz/) and post them to [zivyobraz.eu](https://in.zivyobraz.eu/). It uses a Dockerized Python script that runs periodically (via `run.sh` scheduling) on a Raspberry Pi.
+This repository contains a simple setup to scrape daily Bible verses from [vira.cz](https://www.vira.cz/) and post them as variables to [zivyobraz.eu](https://in.zivyobraz.eu/). It uses a Dockerized Python script that runs periodically (via `run.sh` scheduling) on a Raspberry Pi.
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Requirements](#requirements)
 - [Raspberry Pi Installation](#raspberry-pi-installation)
-- [Usage](#usage)
-- [Environment Variables](#environment-variables)
 
 ---
 
 ## Overview
 
-1. **Scraping**: Pulls a Bible verse from `vira.cz`.
+1. **Scraping**: Pulls the daily Bible verse from `vira.cz` (see [docs here](https://www.vira.cz/Servis-pro-vas/Sluzby-pro-webmastery/Zobrazeni-biblickeho-citatu)).
 2. **Parsing**: Extracts the verse text and reference with BeautifulSoup.
-3. **Posting**: Sends them to `zivyobraz.eu` using the `ZIVYOBRAZ_API_IMPORT_KEY`.
-4. **Scheduling**: A simple `run.sh` script loops or runs the Python script on a defined interval.
+3. **Posting**: Sends them to your `zivyobraz` as `bible_verse` and `bible_ref` values. It reads the `ZIVYOBRAZ_API_IMPORT_KEY` from an .env file (not included).
+4. **Scheduling**: A simple `run.sh` script runs the Python script on a 24h interval.
 
 ---
 
@@ -45,50 +43,21 @@ This repository contains a simple setup to scrape daily Bible verses from [vira.
    cd zivyobraz_citat_dne
    ```
 
-4. **Set Up Environment Variables**  
+4. **Set Up Environment Variables**
+   <img width="885" alt="zo_import_key" src="https://github.com/user-attachments/assets/1ba786ef-5f2a-4f29-bfb6-5a281a334bcc" />
    - Create a `.env` file in the same directory as `docker-compose.yml`.  
-   - Add `ZIVYOBRAZ_API_IMPORT_KEY` and any other needed variables:
+   - Add your `ZIVYOBRAZ_API_IMPORT_KEY`:
      ```bash
      echo "ZIVYOBRAZ_API_IMPORT_KEY=your-secret-key" >> .env
      ```
-   - Make sure `.env` is listed in `.gitignore` to avoid pushing secrets.
+   - Docker Compose automatically reads variables from `.env` in this directory during `docker compose up`.
 
-5. **Build and Start the Docker Container**  
+6. **Build and Start the Docker Container**  
    ```bash
    docker compose up --build -d
    ```
 
-6. **Check Logs**  
+7. **Check Logs**  
    ```bash
-   docker logs citat_scheduler
+   docker logs citat_dne
    ```
-
----
-
-## Usage
-
-- **Periodic Execution**: By default, the `run.sh` script handles calling `script.py` in a loop or with your custom schedule.  
-- **Logging**: Check the container logs to see output and posted verses:  
-  ```bash
-  docker logs citat_scheduler
-  ```
-- **Stopping**:  
-  ```bash
-  docker compose down
-  ```
-
----
-
-## Environment Variables
-
-- **ZIVYOBRAZ_API_IMPORT_KEY**: Used to authenticate with the [zivyobraz.eu](https://in.zivyobraz.eu/) API.  
-- Keep all sensitive variables in your `.env` (not committed to the repo).  
-
-Example `.env`:
-```bash
-ZIVYOBRAZ_API_IMPORT_KEY=your-secret-key
-```
-
-Docker Compose automatically reads variables from `.env` in this directory during `docker compose up`.
-
----
